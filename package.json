@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node server.js",
-    "build": "ng build --prod",
+    "start": "ng serve",
+    "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "heroku-postbuild": "ng build --prod"
@@ -25,6 +25,7 @@
     "@capacitor/cli": "^3.6.0",
     "@capacitor/core": "^3.6.0",
     "@capacitor/filesystem": "^1.1.0",
+    "@capacitor/google-maps": "^1.1.0",
     "@capacitor/haptics": "^1.1.4",
     "@capacitor/keyboard": "^1.2.3",
     "@google-cloud/speech": "^4.10.2",
@@ -33,10 +34,13 @@
     "capacitor-voice-recorder": "^2.2.0",
     "express": "^4.18.1",
     "fuzzball": "^2.1.2",
+    "linq": "^4.0.0",
     "path": "^0.12.7",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
+    "tts-js": "^1.0.1",
     "typescript": "~4.7.2",
+    "ymaps": "^0.2.1",
     "zone.js": "~0.11.4"
   },
   "browser": {
@@ -63,6 +67,6 @@
   },
   "engines": {
     "node": "16.15.1",
-    "npm": "8.11.0"
+    "npm": "g8.11.0"
   }
 }

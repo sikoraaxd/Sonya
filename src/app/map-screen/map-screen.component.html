@@ -1,0 +1,28 @@
+<section class="h-screen 
+                w-screen 
+                flex
+                flex-col">
+    <main class="grow">
+        <div id="map" class="m-auto mt-4 map"></div>
+    </main>
+    <footer class="flex 
+                    items-center
+                    justify-center
+                    h-20
+                    content-end">
+        <button class="speakButton 
+                       bg-purple-400
+                       text-white
+                       py-2 px-4
+                       w-12 h-12
+                       rounded-full
+                       outline-none
+                       inline-flex
+                       items-center"
+                       (click)="backToMainScreen()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 scale-150" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+              </svg>
+        </button>
+    </footer>
+</section>

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { RecordingData, VoiceRecorder } from 'capacitor-voice-recorder';
-import { interval } from 'rxjs';
+import { Router } from '@angular/router';
 import { CommandRecognitionService } from '../service/command-recognition.service';
 import { VoiceRecognitionService } from '../service/voice-recognition.service';
+import {TEMP} from '../service/extendedData.js'
+import tts from 'tts-js'
 
 
 @Component({
@@ -17,17 +18,17 @@ export class MainScreenComponent implements OnInit {
   storedFileNames: string[] = []
 
   constructor(public srService : VoiceRecognitionService,
-              public crService : CommandRecognitionService) {
+              public crService : CommandRecognitionService,
+              private routing: Router) {
     this.srService.init()
   }
 
   ngOnInit(): void {
-    VoiceRecorder.canDeviceVoiceRecord
-    VoiceRecorder.requestAudioRecordingPermission()
     this.mainText = "Привет, я - Соня!"
   }
 
   async startListening() {
+    await navigator.mediaDevices.getUserMedia({audio: true});
     this.recording = !this.recording
     if (this.recording == true)
     {
@@ -37,10 +38,29 @@ export class MainScreenComponent implements OnInit {
     else
     {
       this.srService.stop()
-      this.mainText = this.srService.text
-      await new Promise(f => setTimeout(f, 2000));
-      this.mainText = this.crService.getCommand(this.mainText);
+      this.mainText = ''
+      if(typeof this.srService.text !== 'undefined')
+        this.mainText = this.srService.text
+      else
+        this.mainText = ''
+
+      await new Promise(f => setTimeout(f, 2000)); 
+      var commandResult = this.crService.getCommand(this.mainText);
+      this.mainText = commandResult['text']
+      this.speakText(this.mainText)
+
+      if(commandResult['redirectToMap'])
+      {
+        await new Promise(f => setTimeout(f, 2000)); 
+        TEMP.SELECTED_PLACE = commandResult['place']
+        this.routing.navigate(['map-screen'])
+      }
+      
     }
+  }
+
+  speakText(text: string) {
+    tts.speak(text, { lang: 'ru-RU', pitch: 1, rate: 1})
   }
 
   startWriting(): void {

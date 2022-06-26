@@ -26,7 +26,6 @@ export class VoiceRecognitionService {
         .map((result) => result.transcript)
         .join('');
       this.tempWords = transcript;
-      console.log(this.tempWords);
     });
   }
 

@@ -4,6 +4,6 @@
 @tailwind utilities;
 
 body {
-    overflow: hidden;
+    overflow-x: hidden;
     background-image: url(assets/bg.jpg);
 }
