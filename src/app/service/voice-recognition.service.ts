@@ -22,7 +22,8 @@ export class VoiceRecognitionService {
     this.recognition.lang = 'ru-RU';
 
     this.recognition.addEventListener('result', (e) => {
-      const transcript = e.results[0][0].transcript
+      var current = e.resultIndex;
+      const transcript = e.results[current][0].transcript
       this.tempWords = transcript;
     });
     
