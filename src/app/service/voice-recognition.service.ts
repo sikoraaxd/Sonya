@@ -9,7 +9,7 @@ declare var SpeechRecognition: any;
 })
 export class VoiceRecognitionService {
 
-  recognition =  new webkitSpeechRecognition || SpeechRecognition;
+  recognition =  new webkitSpeechRecognition || new SpeechRecognition;
   isStoppedSpeechRecog = false;
   public text = '';
   tempWords;
