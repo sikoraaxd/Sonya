@@ -1,0 +1,6 @@
+{
+	"appId": "com.Sikora.Sonya",
+	"appName": "Sonya",
+	"webDir": "dist/sonya",
+	"bundledWebRuntime": true
+}
