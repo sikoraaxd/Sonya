@@ -25,7 +25,7 @@ export class VoiceRecognitionService {
     this.recognition.addEventListener('result', (e) => {
       var interim_transcript = ''
       for(var i = e.resultIndex; i < e.results.length; ++i) {
-        if(event.results[i].isFinal) {
+        if(e.results[i].isFinal) {
           this.text += e.results[i][0].transcript
         } else {
           interim_transcript += e.results[i][0].transcript
