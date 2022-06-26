@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
+import { MainScreenComponent } from '../main-screen/main-screen.component';
 
 declare var webkitSpeechRecognition: any;
-declare var SpeechRecognition: any;
 
 @Injectable({
   providedIn: 'root'
@@ -18,35 +18,15 @@ export class VoiceRecognitionService {
   init() {
 
     this.recognition.interimResults = true;
-    this.recognition.continuous = true;
-    this.recognition.lang = 'ru-RU';
+    this.recognition.lang = 'ru';
 
     this.recognition.addEventListener('result', (e) => {
-<<<<<<< HEAD
       const transcript = Array.from(e.results)
         .map((result: any) => result[0])
         .map((result) => result.transcript)
         .join('');
       this.tempWords = transcript;
-      console.log(this.tempWords)
-=======
-      var interim_transcript = ''
-      for(var i = e.resultIndex; i < e.results.length; ++i) {
-        if(e.results[i].isFinal) {
-          this.text += e.results[i][0].transcript
-        } else {
-          interim_transcript += e.results[i][0].transcript
-        }
-      }
-    });
-    
-    this.recognition.addEventListener('end', (condition) => {
-      if (this.isStoppedSpeechRecog) {
-        this.recognition.stop();
-      } else {
-        this.recognition.start();
-      }
->>>>>>> ae2abad89a05ae109442cde108e46ccec1386cf0
+      console.log(this.tempWords);
     });
   }
 
@@ -54,11 +34,19 @@ export class VoiceRecognitionService {
     this.text = ''
     this.isStoppedSpeechRecog = false;
     this.recognition.start();
-    
+    this.recognition.addEventListener('end', (condition) => {
+      if (this.isStoppedSpeechRecog) {
+        this.recognition.stop();
+      } else {
+        this.wordConcat()
+        this.recognition.start();
+      }
+    });
   }
 
   stop() {
     this.isStoppedSpeechRecog = true;
+    this.wordConcat()
     this.recognition.stop();
   }
 
