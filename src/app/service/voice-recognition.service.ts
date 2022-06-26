@@ -24,12 +24,7 @@ export class VoiceRecognitionService {
       const transcript = e.results[0][0].transcript
       this.tempWords = transcript;
     });
-  }
-
-  start() {
-    this.text = ''
-    this.isStoppedSpeechRecog = false;
-    this.recognition.start();
+    
     this.recognition.addEventListener('end', (condition) => {
       if (this.isStoppedSpeechRecog) {
         this.recognition.stop();
@@ -38,6 +33,13 @@ export class VoiceRecognitionService {
         this.recognition.start();
       }
     });
+  }
+
+  start() {
+    this.text = ''
+    this.isStoppedSpeechRecog = false;
+    this.recognition.start();
+    
   }
 
   stop() {
