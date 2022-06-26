@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { MainScreenComponent } from '../main-screen/main-screen.component';
 
 declare var webkitSpeechRecognition: any;
+declare var SpeechRecognition: any;
 
 @Injectable({
   providedIn: 'root'
 })
 export class VoiceRecognitionService {
 
-  recognition =  new webkitSpeechRecognition();
+  recognition =  new webkitSpeechRecognition || SpeechRecognition;
   isStoppedSpeechRecog = false;
   public text = '';
   tempWords;
