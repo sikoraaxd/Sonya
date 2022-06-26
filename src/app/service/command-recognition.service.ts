@@ -126,7 +126,6 @@ export class CommandRecognitionService {
         var scheduleTeacher = {target: "", percent: 0}
         this.teachers.forEach((teacher)=> {
           var vrt = ratio(cmdText, teacher['name'])
-          console.log(teacher, vrt)
           if(vrt > scheduleTeacher['percent']) {
             scheduleTeacher['target'] = teacher['scheduleName']
             scheduleTeacher['percent'] = vrt

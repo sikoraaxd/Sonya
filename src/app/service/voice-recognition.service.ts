@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { MainScreenComponent } from '../main-screen/main-screen.component';
 
 declare var webkitSpeechRecognition: any;
 
@@ -26,6 +25,7 @@ export class VoiceRecognitionService {
         .map((result) => result.transcript)
         .join('');
       this.tempWords = transcript;
+      console.log(this.tempWords)
     });
   }
 
