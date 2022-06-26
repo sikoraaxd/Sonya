@@ -9,18 +9,18 @@ export class SonyaService {
   constructor(private httpClient: HttpClient) { }
 
   getCommands() {
-    return this.httpClient.get('http://localhost:3000/command')
+    return this.httpClient.get('https://sonya-va-server.herokuapp.com/command')
   }
 
   getGroups() {
-    return this.httpClient.get('http://localhost:3000/group')
+    return this.httpClient.get('https://sonya-va-server.herokuapp.com/group')
   }
 
   getTeachers() {
-    return this.httpClient.get('http://localhost:3000/teacher')
+    return this.httpClient.get('https://sonya-va-server.herokuapp.com/teacher')
   }
 
   getPlaces() {
-    return this.httpClient.get('http://localhost:3000/place')
+    return this.httpClient.get('https://sonya-va-server.herokuapp.com/place')
   }
 }
