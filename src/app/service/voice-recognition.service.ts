@@ -9,7 +9,7 @@ declare var SpeechRecognition: any;
 })
 export class VoiceRecognitionService {
 
-  recognition =  new webkitSpeechRecognition || new SpeechRecognition;
+  recognition =  new webkitSpeechRecognition();
   isStoppedSpeechRecog = false;
   public text = '';
   tempWords;
@@ -19,19 +19,24 @@ export class VoiceRecognitionService {
   init() {
 
     this.recognition.interimResults = true;
+    this.recognition.continuous = true;
     this.recognition.lang = 'ru-RU';
 
     this.recognition.addEventListener('result', (e) => {
-      var current = e.resultIndex;
-      const transcript = e.results[current][0].transcript
-      this.tempWords = transcript;
+      var interim_transcript = ''
+      for(var i = e.resultIndex; i < e.results.length; ++i) {
+        if(event.results[i].isFinal) {
+          this.text += e.results[i][0].transcript
+        } else {
+          interim_transcript += e.results[i][0].transcript
+        }
+      }
     });
     
     this.recognition.addEventListener('end', (condition) => {
       if (this.isStoppedSpeechRecog) {
         this.recognition.stop();
       } else {
-        this.wordConcat()
         this.recognition.start();
       }
     });
@@ -46,7 +51,6 @@ export class VoiceRecognitionService {
 
   stop() {
     this.isStoppedSpeechRecog = true;
-    this.wordConcat()
     this.recognition.stop();
   }
 
