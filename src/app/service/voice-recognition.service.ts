@@ -1,55 +1,88 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 
-declare var webkitSpeechRecognition: any;
+declare const annyang: any;
 
 @Injectable({
   providedIn: 'root'
 })
 export class VoiceRecognitionService {
 
-  recognition =  new webkitSpeechRecognition();
-  isStoppedSpeechRecog = false;
-  public text = '';
-  tempWords;
+  voiceActiveSectionDisabled: boolean = true;
+	voiceActiveSectionError: boolean = false;
+	voiceActiveSectionSuccess: boolean = false;
+	voiceActiveSectionListening: boolean = false;
+	voiceText: any;
+  public text: string = ''
 
-  constructor() { }
+  constructor(private ngZone: NgZone) { }
 
-  init() {
+  initializeVoiceRecognitionCallback(): void {
+		annyang.addCallback('error', (err) => {
+      if(err.error === 'network'){
+        this.voiceText = "Internet is require";
+        annyang.abort();
+        this.ngZone.run(() => this.voiceActiveSectionSuccess = true);
+      } else if (this.voiceText === undefined) {
+				this.ngZone.run(() => this.voiceActiveSectionError = true);
+				annyang.abort();
+			}
+		});
 
-    this.recognition.interimResults = true;
-    this.recognition.lang = 'ru';
+		annyang.addCallback('soundstart', (res) => {
+      this.ngZone.run(() => this.voiceActiveSectionListening = true);
+		});
 
-    this.recognition.addEventListener('result', (e) => {
-      const transcript = Array.from(e.results)
-        .map((result: any) => result[0])
-        .map((result) => result.transcript)
-        .join('');
-      this.tempWords = transcript;
-    });
-  }
+		annyang.addCallback('end', () => {
+      if (this.voiceText === undefined) {
+        this.ngZone.run(() => this.voiceActiveSectionError = true);
+				annyang.abort();
+			}
+		});
 
-  start() {
-    this.text = ''
-    this.isStoppedSpeechRecog = false;
-    this.recognition.start();
-    this.recognition.addEventListener('end', (condition) => {
-      if (this.isStoppedSpeechRecog) {
-        this.recognition.stop();
-      } else {
-        this.wordConcat()
-        this.recognition.start();
-      }
-    });
-  }
+		annyang.addCallback('result', (userSaid) => {
+			this.ngZone.run(() => this.voiceActiveSectionError = false);
 
-  stop() {
-    this.isStoppedSpeechRecog = true;
-    this.wordConcat()
-    this.recognition.stop();
-  }
+			let queryText: any = userSaid[0];
 
-  wordConcat() {
-    this.text = this.text + ' ' + this.tempWords
-    this.tempWords = ''
-  }
+			annyang.abort();
+
+      this.voiceText = queryText;
+      console.log(this.voiceText)
+			this.ngZone.run(() => this.voiceActiveSectionListening = false);
+      this.ngZone.run(() => this.voiceActiveSectionSuccess = true);
+		});
+	}
+  startVoiceRecognition(): void {
+    this.voiceActiveSectionDisabled = false;
+		this.voiceActiveSectionError = false;
+		this.voiceActiveSectionSuccess = false;
+    this.voiceText = undefined;
+    annyang.setLanguage('ru');
+		if (annyang) {
+			let commands = {
+				'привет.': () => { 
+          console.log('Привет')
+        }
+			};
+
+			annyang.addCommands(commands);
+
+      this.initializeVoiceRecognitionCallback();
+
+			annyang.start({ autoRestart: false });
+		}
+	}
+
+	closeVoiceRecognition(): void {
+    this.text = this.voiceText
+    this.voiceActiveSectionDisabled = true;
+		this.voiceActiveSectionError = false;
+		this.voiceActiveSectionSuccess = false;
+		this.voiceActiveSectionListening = false;
+		this.voiceText = undefined;
+
+		if(annyang){
+      annyang.abort();
+    }
+	}
 } 
