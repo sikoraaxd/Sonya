@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, HostListener, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommandRecognitionService } from '../service/command-recognition.service';
 import { VoiceRecognitionService } from '../service/voice-recognition.service';
@@ -15,27 +15,35 @@ declare const annyang: any;
 })
 export class MainScreenComponent implements OnInit {
 
-  voiceActiveSectionDisabled: boolean = true;
-	voiceActiveSectionError: boolean = false;
-	voiceActiveSectionSuccess: boolean = false;
-	voiceActiveSectionListening: boolean = false;
-	voiceText: any;
+  voiceActiveSectionDisabled: boolean = true
+	voiceActiveSectionError: boolean = false
+	voiceActiveSectionSuccess: boolean = false
+	voiceActiveSectionListening: boolean = false
+	voiceText: any
+  
+  canRecord: boolean = false
 
   mainText: string = ''
   recording = false
   storedFileNames: string[] = []
+
+  keyboardEntrering: boolean = false
 
   constructor(private ngZone: NgZone,
               public crService : CommandRecognitionService,
               private routing: Router) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.mainText = "Привет, я - Соня!"
+    var recPerm = true
+    await navigator.mediaDevices.getUserMedia({audio: true}).catch(function(err) {
+      recPerm = false
+    })
+    this.canRecord = recPerm
   }
 
   async startListening() {
-    await navigator.mediaDevices.getUserMedia({audio: true});
     this.recording = !this.recording
     if (this.recording == true)
     {
@@ -45,7 +53,11 @@ export class MainScreenComponent implements OnInit {
     else
     {
       this.closeVoiceRecognition()
-
+      if(this.mainText == '...')
+      {
+        this.mainText = "Привет, я - Соня!"
+        return
+      }
       await new Promise(f => setTimeout(f, 2000)); 
       var commandResult = this.crService.getCommand(this.mainText);
       this.mainText = commandResult['text']
@@ -61,12 +73,57 @@ export class MainScreenComponent implements OnInit {
     }
   }
 
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if(this.keyboardEntrering)
+    {
+      if(event.key == 'Backspace')
+      {
+        if(this.mainText.length != 0)
+          this.mainText = this.mainText.substring(0, this.mainText.length-1)
+      }
+      else if(event.key == 'Space')
+        this.mainText += ' '
+      else if(event.key == 'Enter')
+      {
+        this.startWriting()
+      }
+      else if(event.key.length === 1)
+        this.mainText += event.key
+    }
+     
+  }
+
+  onKeydown(event: KeyboardEvent) {
+    return event.key
+  }
+
   speakText(text: string) {
     tts.speak(text, { lang: 'ru-RU', pitch: 1, rate: 1})
   }
 
-  startWriting(): void {
-    
+  async startWriting() {
+    this.keyboardEntrering = !this.keyboardEntrering;
+    if(this.keyboardEntrering)
+      this.mainText = ''
+    else {
+      if(this.mainText == '')
+      {
+        this.mainText = "Привет, я - Соня!"
+        return
+      }
+      await new Promise(f => setTimeout(f, 2000)); 
+      var commandResult = this.crService.getCommand(this.mainText);
+      this.mainText = commandResult['text']
+      this.speakText(commandResult['tts'])
+
+      if(commandResult['redirectToMap'])
+      {
+        await new Promise(f => setTimeout(f, 2000)); 
+        TEMP.SELECTED_PLACE = commandResult['place']
+        this.routing.navigate(['map-screen'])
+      }
+    }
   }
 
   initializeVoiceRecognitionCallback(): void {

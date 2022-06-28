@@ -32,8 +32,10 @@
                        inline-flex
                        items-center
                        hover:shadow-xl
-                       duration-300"
+                       duration-300
+                       disabled:bg-gray-400"
                        (click)="startListening()"
+                       [disabled]="keyboardEntrering || !canRecord"
                        [ngClass]="recording ? 'bg-red-500 animate-pulse hover:bg-red-700' : 'bg-purple-500 hover:bg-purple-700'">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" class="h-12 w-12 scale-100" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" />
@@ -49,8 +51,11 @@
                        outline-none
                        inline-flex
                        items-center
-                       justify-center"
-                       (click)="startWriting()">
+                       justify-center
+                       disabled:opacity-25"
+                       (click)="startWriting()"
+                       [disabled]="recording"
+                       [ngClass]="keyboardEntrering ? 'outline-purple-500 rounded outline-dashed animate-pulse' : 'outline-none'">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 scale-150" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd" />
             </svg>
