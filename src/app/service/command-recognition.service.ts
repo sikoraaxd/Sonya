@@ -51,29 +51,36 @@ export class CommandRecognitionService {
 
   getResponce(cmd: string, cmdText: string)
   {
-    var result = {text: '', redirectToMap: false, place: []}
+    var result = {text: '', tts: '', redirectToMap: false, place: []}
     if(cmd == '')
+    {
       result['text'] = 'Что?'
+      result['tts'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
+    }
     else if(cmd == 'Привет')
     {
       result['text'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
+      result['tts'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
     }
     else if(cmd == 'Что умею')
     {
       result['text'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
+      result['tts'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
       result['text'] += '\n'
       this.commands.forEach(element => {
-        result['text'] += element['name'].toLowerCase() + ',' + '\n'
+        result['text'] += element['name'].toLowerCase() + '\n'
       });
     }
     else if(cmd == 'Как поступить')
     {
       result['text'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
+      result['tts'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
       window.open("https://astu.org/Content/Page/4610", "_blank")
     }
     else if(cmd == 'Как дойти')
     {
       result['text'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
+      result['tts'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
       this.tbr.forEach(x => {
         cmdText = cmdText.replace(x, '')
       })
@@ -93,6 +100,7 @@ export class CommandRecognitionService {
     else if(cmd == 'Какое расписание')
     {
       result['text'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
+      result['tts'] = Enumerable.from(this.commands).where(x => x['name'] == cmd).first()['responce']
       var scheduleObjects = ['группа', 'преподаватель']
       this.tbr.forEach(x => {
         cmdText = cmdText.replace(x, '')
@@ -108,9 +116,17 @@ export class CommandRecognitionService {
             scheduleGroup['percent'] = vrt
           }
         })
-      var scheduleObject = extract(cmdText, scheduleObjects, options)
       
-      if(scheduleObject[0][0] == "группа")
+      var scheduleType = {target: "", percent: 0}
+      cmdText.split(' ').forEach(word => {
+        var vrt = extract(word, scheduleObjects, options)[0]
+        if(vrt[1] > scheduleType['percent']) {
+          scheduleType['target'] = vrt[0]
+          scheduleType['percent'] = vrt[1]
+        }
+      })
+      
+      if(scheduleType['target'] == "группа")
       {
         var scheduleGroup = {target: "", percent: 0}
         this.groups.forEach((group)=> {

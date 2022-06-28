@@ -22,18 +22,20 @@ export class MapScreenComponent implements OnInit {
     });
 
    
-    var location = ymaps.geolocation.get({ mapStateAutoApply: true }).then((result) => {
+    var location = ymaps.geolocation.get({ mapStateAutoApply: true, provider: 'browser'}).then((result) => {
         var multiRoute = new ymaps.multiRouter.MultiRoute({   
           referencePoints: [
-              TEMP.SELECTED_PLACE,
               result.geoObjects['position'],
+              TEMP.SELECTED_PLACE,
           ]
         }, {
-              // Автоматически устанавливать границы карты так,
-              // чтобы маршрут был виден целиком.
               boundsAutoApply: true
         });
         myMap.geoObjects.add(multiRoute);
+        
+    }, function (err) {
+        var neededPlace = new ymaps.Placemark(TEMP.SELECTED_PLACE)
+        myMap.geoObjects.add(neededPlace);
     }) 
   }
 

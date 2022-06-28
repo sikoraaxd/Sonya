@@ -49,7 +49,7 @@ export class MainScreenComponent implements OnInit {
       await new Promise(f => setTimeout(f, 2000)); 
       var commandResult = this.crService.getCommand(this.mainText);
       this.mainText = commandResult['text']
-      this.speakText(this.mainText)
+      this.speakText(commandResult['tts'])
 
       if(commandResult['redirectToMap'])
       {
@@ -112,9 +112,13 @@ export class MainScreenComponent implements OnInit {
     this.voiceText = undefined;
     annyang.setLanguage('ru');
 		if (annyang) {
+			let commands = {
+			};
+
+			annyang.addCommands(commands);
 
       this.initializeVoiceRecognitionCallback();
-
+      
 			annyang.start({ autoRestart: false });
 		}
 	}
